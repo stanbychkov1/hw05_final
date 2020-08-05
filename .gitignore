@@ -3,10 +3,12 @@ env/
 venv/
 .venv
 .venv/
+.yatube_new/
+yatube_new/
+
 
 __pycache__/
 *.py[cod]
-
 .idea
 .DS_Store
 .AppleDouble
@@ -17,6 +19,7 @@ __pycache__/
 
 static/
 posts/static/
+sent_emails/
 media/
 
 db.sqlite3

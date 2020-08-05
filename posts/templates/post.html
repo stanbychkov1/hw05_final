@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Пост {{author.username}}{% endblock %}
+{% block header %}Пост {{author.username}}{% endblock %}
+{% block content %}
+{% load thumbnail %}
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-3 mb-3 mt-1">
+            {% include 'user_card.html' with author=author count_posts=count_posts count_following=count_following count_follower=count_follower %}
+        </div>
+        <div class="col-md-9">
+            <!-- Пост -->
+            {% include "post_item.html" with post=post %}
+            {% if comment %}
+                <div class="card mb-3 mt-1 shadow-sm">
+                    <div class="card-body">
+                        <p class="card-text">
+                            {%include 'comments.html' with form=form item=item %}
+                        </p>
+                    </div>
+                </div>
+            {%endif%}
+        </div>
+    </div>
+</main>
+{%endblock%}
