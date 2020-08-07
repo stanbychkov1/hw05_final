@@ -1,16 +1,18 @@
 import io
-from unittest import mock
-from django.core.cache import cache
-from django.core.files import File
-from django.test import TestCase, Client, override_settings
-from django.urls import reverse
-from django.contrib.auth.models import User
-from .models import Post, Group, Follow, Comment
-from PIL import Image
 import tempfile
 
+from PIL import Image
+from unittest import mock
+from django.test import TestCase, Client, override_settings
+from django.urls import reverse
+from django.core.cache import cache
+from django.core.files import File
+from django.contrib.auth.models import User
 
-class MyTests(TestCase):
+from .models import Post, Group, Follow, Comment
+
+
+class PostProjectTests(TestCase):
     def setUp(self):
         cache.clear()
         self.client_auth = Client()
@@ -39,7 +41,8 @@ class MyTests(TestCase):
     def _get_urls(self, post, text):
         urls = (reverse('index'),
                 reverse('profile', kwargs={'username': self.user.username}),
-                reverse('post', kwargs={'username': self.user.username, 'post_id': post.pk}),
+                reverse('post', kwargs={'username': self.user.username,
+                                        'post_id': post.pk}),
                 reverse('group', kwargs={'slug': self.group.slug}))
         for url in urls:
             response = self.client_auth.get(url)
@@ -54,7 +57,8 @@ class MyTests(TestCase):
         return file
 
     def test_to_see_profile(self):
-        response = self.client.get(reverse('profile', kwargs={'username': 'sarah'}))
+        response = self.client.get(reverse('profile',
+                                           kwargs={'username': 'sarah'}))
         self.assertEqual(response.status_code, 200)
 
     def test_auth_user_can_post(self):
@@ -63,7 +67,8 @@ class MyTests(TestCase):
             'group': self.group.pk,
             'author': self.user
         })
-        response = self.client.get(reverse('profile', kwargs={'username': 'sarah'}))
+        response = self.client.get(reverse('profile',
+                                           kwargs={'username': 'sarah'}))
         self.assertEqual(len(response.context['posts']), 1)
         new_post = Post.objects.first()
         self.assertEqual(new_post.text, 'new text')
@@ -71,7 +76,8 @@ class MyTests(TestCase):
         self.assertEqual(new_post.group, self.group)
 
     def test_unauth_user_can_post(self):
-        response = self.client_unauth.post(reverse('new_post'), {'text': 'new text unauth'})
+        response = self.client_unauth.post(reverse('new_post'),
+                                           {'text': 'new text unauth'})
         self.assertRedirects(response, '/auth/login/?next=/new/')
 
     def test_new_post_view(self):
@@ -169,11 +175,19 @@ class MyTests(TestCase):
         response = self.client_auth.get(reverse('index'))
         self.assertContains(response, 'new text')
 
-    def test_auth_user_can_follow_unfollow(self):
+    def test_auth_user_can_follow(self):
         new_user = User.objects.create_user(username='wildorf')
-        self.client_auth.get(reverse('profile_follow', kwargs={'username': new_user.username}))
+        self.client_auth.get(reverse('profile_follow',
+                                     kwargs={'username': new_user.username}))
         self.assertEqual(len(new_user.following.all()), 1)
-        self.client_auth.get(reverse('profile_unfollow', kwargs={'username': new_user.username}))
+
+    def test_auth_user_can_unfollow(self):
+        new_user = User.objects.create_user(username='wildorf')
+        self.client_auth.get(reverse('profile_follow',
+                                     kwargs={'username': new_user.username}))
+        self.assertEqual(len(new_user.following.all()), 1)
+        self.client_auth.get(reverse('profile_unfollow',
+                                     kwargs={'username': new_user.username}))
         self.assertEqual(len(new_user.following.all()), 0)
 
     def test_new_post_followers_can_see(self):

@@ -1,6 +1,6 @@
-from django.contrib.auth import get_user_model
-from django import forms
 from django.forms import ModelForm
+from django.contrib.auth import get_user_model
+
 from .models import Post, Comment
 
 User = get_user_model()
@@ -9,7 +9,7 @@ User = get_user_model()
 class PostForm(ModelForm):
     class Meta:
         model = Post
-        fields = ['text', 'group', 'image']
+        fields = ('text', 'group', 'image',)
         labels = {
             'text': ('Текст'),
             'group': ('Группа'),
@@ -20,5 +20,5 @@ class PostForm(ModelForm):
 class CommentForm(ModelForm):
     class Meta:
         model = Comment
-        fields = ['text']
+        fields = ('text',)
         labels = {'text': ('Комментарий')}
