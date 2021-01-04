@@ -7,7 +7,6 @@
 
     {% include "includes/menu.html" with index=True %}
 
-{% cache 20 sidebar index_page %}
     {% for post in page %}
         {% include "posts/includes/post_item.html" with post=post %}
     {% endfor %}
@@ -15,5 +14,4 @@
     {% if page.has_other_pages %}
         {% include "includes/paginator.html" with items=page paginator=paginator %}
     {% endif %}
-{% endcache%}
 {% endblock %}
