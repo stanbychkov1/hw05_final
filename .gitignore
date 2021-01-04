@@ -18,7 +18,6 @@ __pycache__/
 *.sublime-workspace
 
 static/
-posts/static/
 sent_emails/
 media/
 
